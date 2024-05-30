@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import IRepository from "./irepository";
+import IRepository from "../interfaces/irepository";
 import Database from "../services/database";
 import IOffer from "../interfaces/ioffer";
 
