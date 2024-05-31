@@ -1,5 +1,7 @@
+import { ObjectId } from "mongodb";
+
 interface IOffer {
-    id?: string | null;
+    _id?: string | ObjectId;
     destination: string;
     price: number;
     description: string;

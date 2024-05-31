@@ -1,14 +1,15 @@
+import { ObjectId } from "mongodb";
 import IOffer from "../interfaces/ioffer";
 
 class Offer implements IOffer {
-    id?: string | null;
+    _id?: string | ObjectId;
     destination: string;
     price: number;
     description: string;
     images: string[];
 
     constructor(offer: IOffer) {
-        this.id = offer.id ?? null;
+        this._id = offer._id;
         this.destination = offer.destination;
         this.price = offer.price;
         this.description = offer.description;

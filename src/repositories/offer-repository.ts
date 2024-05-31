@@ -6,51 +6,49 @@ import IOffer from "../interfaces/ioffer";
 class OfferRepository implements IRepository<IOffer> {
     collection = "offers"
 
-    async findById(id: string): Promise<IOffer | null> {
+    async create(entity: IOffer): Promise<IOffer> {
         const db = await Database.connect();
-        const offers = await db.collection<IOffer>(this.collection);
-        return await offers.findOne(
-            { _id: new ObjectId(id) }
+        const users = await db.collection<IOffer>(this.collection);
+        await users.insertOne(entity);
+        return entity;
+    }
+
+    async update(entity: Partial<IOffer>): Promise<IOffer | null> {
+        const db = await Database.connect();
+        const users = await db.collection<IOffer>(this.collection);
+        const _id = new ObjectId(entity._id);
+        delete entity._id;
+
+        const result = await users.findOneAndUpdate(
+            { _id },
+            { $set: entity },
+            { returnDocument: "after" }
         );
+
+        return result;
+    }
+
+    async delete(entity: IOffer): Promise<boolean> {
+        const db = await Database.connect();
+        const users = await db.collection<IOffer>(this.collection);
+        const result = await users.deleteOne(
+            { _id: new ObjectId(entity._id) },
+        );
+
+        return result.deletedCount ? true : false;
+    }
+
+
+    async findById(entity: IOffer): Promise<IOffer | null> {
+        const db = await Database.connect();
+        const users = await db.collection<IOffer>(this.collection);
+        return await users.findOne({ _id: new ObjectId(entity._id) });
     }
 
     async findAll(): Promise<IOffer[]> {
         const db = await Database.connect();
-        const offers = await db.collection<IOffer>(this.collection);
-        return await offers.find({}).toArray();
-    }
-
-    async create(entity: IOffer): Promise<IOffer> {
-        try {
-            const db = await Database.connect();
-            const offers = await db.collection<IOffer>(this.collection);
-            const result = await offers.insertOne(entity);
-            entity.id = result.insertedId.toString();
-            return entity;
-        }
-        catch (e) {
-            throw e;
-        }
-    }
-
-    async update(id: string, entity: Partial<IOffer>): Promise<IOffer | null> {
-        const db = await Database.connect();
-        const offers = await db.collection<IOffer>(this.collection);
-        const result = await offers.findOneAndUpdate(
-            { _id: new ObjectId(id) },
-            { $set: entity },
-            { returnDocument: "after" }
-        );
-        return result;
-    }
-
-    async delete(id: string): Promise<boolean> {
-        const db = await Database.connect();
-        const offers = await db.collection<IOffer>(this.collection);
-        const result = await offers.deleteOne(
-            { _id: new ObjectId(id) },
-        );
-        return result.deletedCount ? true : false;
+        const users = await db.collection<IOffer>(this.collection);
+        return await users.find().toArray();
     }
 }
 

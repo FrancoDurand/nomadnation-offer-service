@@ -7,14 +7,14 @@ class OfferController {
 
     public static async findById(req: Request, res: Response): Promise<void> {
         try {
-            const offer = req.body;
+            const offer: IOffer = req.body;
 
-            if (!offer.id) {
+            if (!offer._id) {
                 res.status(400).json({ message: 'Invalid offer data' });
                 return;
             }
 
-            const result = await OfferController.repository.findById(offer.id);
+            const result = await OfferController.repository.findById(offer);
             res.json(result);
         }
         catch (e) {
@@ -35,7 +35,6 @@ class OfferController {
     public static async create(req: Request, res: Response): Promise<void> {
         try {
             const offer: IOffer = req.body;
-            console.log(offer);
 
             if (!offer.destination || !offer.price || !offer.description || !offer.images) {
                 res.status(400).json({ message: 'Invalid offer data' });
@@ -45,8 +44,8 @@ class OfferController {
             const result = await OfferController.repository.create(offer);
 
             if (result) {
-                console.log(result);
                 res.status(200).json(result);
+                return;
             }
             else
                 res.status(400).json({ message: "Offert not created" });
@@ -60,12 +59,12 @@ class OfferController {
         try {
             const offer: IOffer = req.body;
 
-            if (!offer.id) {
+            if (!offer._id) {
                 res.status(400).json({ message: 'Invalid offer data' });
                 return;
             }
 
-            const result = await OfferController.repository.update(offer.id, offer);
+            const result = await OfferController.repository.update(offer);
 
             if (result) {
                 res.status(200).json({ message: "Offert updated", offer });
@@ -82,15 +81,14 @@ class OfferController {
         try {
             const offer: IOffer = req.body;
 
-            if (!offer.id) {
+            if (!offer._id) {
                 res.status(400).json({ message: 'Invalid offer data' });
                 return;
             }
 
-            const result = await OfferController.repository.delete(offer.id);
+            const result = await OfferController.repository.delete(offer);
 
             if (result) {
-                console.log("Offert deleted", offer.id);
                 res.status(200).json({ message: "Offert deleted" });
             }
             else
