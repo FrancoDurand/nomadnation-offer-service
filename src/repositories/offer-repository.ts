@@ -8,47 +8,54 @@ class OfferRepository implements IRepository<IOffer> {
 
     async create(entity: IOffer): Promise<IOffer> {
         const db = await Database.connect();
-        const users = await db.collection<IOffer>(this.collection);
-        await users.insertOne(entity);
+        const offers = await db.collection<IOffer>(this.collection);
+        await offers.insertOne(entity);
+        await Database.disconnect();
         return entity;
     }
 
     async update(entity: Partial<IOffer>): Promise<IOffer | null> {
         const db = await Database.connect();
-        const users = await db.collection<IOffer>(this.collection);
+        const offers = await db.collection<IOffer>(this.collection);
         const _id = new ObjectId(entity._id);
         delete entity._id;
 
-        const result = await users.findOneAndUpdate(
+        const result = await offers.findOneAndUpdate(
             { _id },
             { $set: entity },
             { returnDocument: "after" }
         );
 
+        await Database.disconnect();
         return result;
     }
 
     async delete(entity: IOffer): Promise<boolean> {
         const db = await Database.connect();
-        const users = await db.collection<IOffer>(this.collection);
-        const result = await users.deleteOne(
+        const offers = await db.collection<IOffer>(this.collection);
+        const result = await offers.deleteOne(
             { _id: new ObjectId(entity._id) },
         );
 
+        await Database.disconnect();
         return result.deletedCount ? true : false;
     }
 
 
     async findById(entity: IOffer): Promise<IOffer | null> {
         const db = await Database.connect();
-        const users = await db.collection<IOffer>(this.collection);
-        return await users.findOne({ _id: new ObjectId(entity._id) });
+        const offers = await db.collection<IOffer>(this.collection);
+        const foundOffer = await offers.findOne({ _id: new ObjectId(entity._id) });
+        await Database.disconnect();
+        return foundOffer;
     }
 
     async findAll(): Promise<IOffer[]> {
         const db = await Database.connect();
-        const users = await db.collection<IOffer>(this.collection);
-        return await users.find().toArray();
+        const offers = await db.collection<IOffer>(this.collection);
+        const allOffers = await offers.find().toArray();
+        await Database.disconnect();
+        return allOffers;
     }
 }
 
